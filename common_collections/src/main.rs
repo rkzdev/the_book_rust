@@ -13,6 +13,188 @@ fn main() {
     string_in_depth();
 
     hash_maps();
+
+    median();
+
+    let numbers = vec![1, 2, 3, 4, 5];
+    println!("{}", mean(&numbers));
+
+    let numbers = [1, 2, 3, 3, 3, 7, 7, 9];
+
+    if let Some(i) = mode(&numbers) {
+        println!("The mode is {i}");
+    }
+
+    let word = pig_latin("hello");
+    println!("{}", word);
+
+    let word = pig_latin("apple");
+    println!("{}", word);
+
+    add_employee_to_department();
+}
+
+fn add_employee_to_department() {
+    let mut company: HashMap<String, Vec<String>> = HashMap::new();
+
+    let engineering = company
+        .entry(String::from("engineering"))
+        .or_insert(Vec::new());
+
+    engineering.push("sally".to_string());
+    engineering.push("raven".to_string());
+    engineering.push("andy".to_string());
+
+    let sales = company.entry(String::from("sales")).or_insert(Vec::new());
+    sales.push("amir".to_string());
+    sales.push("kristine".to_string());
+
+    println!("{:?}", company);
+
+    get_all_employee_by_department("engineering", &mut company);
+
+    fn get_all_employee_by_department(
+        department: &str,
+        company: &mut HashMap<String, Vec<String>>,
+    ) -> () {
+        if department == "engineering" {
+            match company.get_mut(department) {
+                Some(dep) => {
+                    dep.sort();
+                    println!("Sorted engineering employee: {:?}", dep);
+                }
+                None => {
+                    println!("The department is empty!")
+                }
+            }
+        } else {
+            println!("{:?}", company.get(department));
+        }
+    }
+}
+
+// Convert strings to pig latin. the first consonant of each word is moved to the end
+// of the word and "ay" is added, so "first" becomes "irst-fay". Words that start with
+// vowel have "hay" added to the end instead "apple" becomes "apple-hay".
+fn pig_latin(word: &str) -> String {
+    let vowels = ['a', 'e', 'i', 'o', 'u'];
+    let mut new_word = String::new();
+
+    if let Some(letter) = word.chars().nth(0) {
+        let mut is_vowel = false;
+
+        for v in vowels {
+            if letter == v {
+                is_vowel = true;
+            }
+        }
+
+        if is_vowel {
+            new_word.push_str(&format!("{}-hay", word));
+        } else {
+            println!("The first letter is consonant");
+            for w in word.chars().skip(1) {
+                new_word.push(w);
+            }
+            new_word.push_str(&format!("-{}ay", letter));
+        }
+    }
+
+    new_word
+
+    // for c in word.chars() {
+    //     for v in vowels.chars() {
+    //         if c == v {
+    //             is_vowel = true;
+    //             break;
+    //         }
+    //     }
+    //     break;
+    // }
+
+    // if is_vowel {
+    //     println!("the first letter is a vowel");
+    // } else {
+    //     println!("the first leter is consonant");
+    // }
+}
+
+fn mode(numbers: &[i32]) -> Option<i32> {
+    let mut data = HashMap::new();
+
+    for number in numbers {
+        let count = data.entry(number).or_insert(0);
+        *count += 1;
+    }
+
+    println!("{:?}", data);
+
+    let mut the_mode = 0;
+    for (_k, v) in data {
+        if the_mode < v {
+            the_mode = v;
+        }
+    }
+
+    Some(the_mode)
+}
+
+fn mean(nums: &Vec<i32>) -> i32 {
+    let mut total: i32 = 0;
+    for v in nums.iter() {
+        total += *v;
+    }
+    total
+}
+
+fn median() {
+    // Given a list of integers, use a vector and return the median
+    // (when sorted, the value in the middle position)
+    // let numbers: Vec<i32> = Vec::new();
+    // let numbers = vec![7, 5, 3, 1, 9, 8];
+    fn get_lowest(nums: &mut Vec<i32>) -> usize {
+        let mut count = 0;
+        let mut smallest_index = 0;
+
+        while count < nums.len() {
+            if nums[smallest_index] >= nums[count] {
+                smallest_index = count;
+            }
+            count += 1;
+        }
+
+        smallest_index
+    }
+
+    fn is_odd(value: usize) -> bool {
+        value % 2 == 1
+    }
+
+    fn get_median(nums: &[i32]) -> i32 {
+        if is_odd(nums.len()) {
+            nums[nums.len() / 2]
+        } else {
+            let left_middle = nums[nums.len() / 2 - 1];
+            let right_middle = nums[nums.len() / 2];
+
+            (left_middle + right_middle) / 2
+        }
+    }
+
+    let mut numbers = vec![7, 5, 3, 1, 9, 8];
+    let mut sorted_numbers: Vec<i32> = Vec::new();
+
+    while 0 < numbers.len() {
+        let smallest = get_lowest(&mut numbers);
+        sorted_numbers.push(numbers[smallest]);
+        numbers.remove(smallest);
+    }
+
+    println!("{:?}", &sorted_numbers);
+
+    let median = get_median(&sorted_numbers);
+
+    println!("The median is {median}");
 }
 
 fn hash_maps() {
@@ -25,6 +207,14 @@ fn hash_maps() {
     scores.insert(String::from("Blue"), 10);
     scores.insert(String::from("Yellow"), 50);
     println!("{:?}", scores);
+
+    let mut check: HashMap<i32, i32> = HashMap::new();
+    check.insert(0, 1);
+    check.insert(1, 4);
+
+    for v in check {
+        println!("the value is : {}", v.1);
+    }
 
     // Accessing values in a hash map
     let team_name = String::from("None");
